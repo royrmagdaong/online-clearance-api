@@ -7,10 +7,17 @@ const authenticate = require('../middlewares/authenticate')
 const authRole = require('../middlewares/authRole')
 
 // get all users
-router.get('/', 
+router.post('/', 
     authenticate, 
     authRole(['admin']), 
     UserController.getAllUser
+)
+
+// get user counts
+router.get('/total-users',
+    authenticate,
+    authRole(['admin']),
+    UserController.getUserCounts
 )
 
 // sign in user

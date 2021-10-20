@@ -2,22 +2,27 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 const Schema = mongoose.Schema
 
-const userSchema = Schema({
-    role: { type: String, required: true },
+const studentSchema = Schema({
+    user_id: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User'
+    },
     name:{
         type: String,
-        required: false
+        default: null
     },
     email:{
         type: String,
         required: true
     },
-    password:{
+    course:{
         type: String,
-        required: true
+        default: null
     },
-    verificationCode: { type: String, required: true },
-    is_verified: { type: Boolean, default: false },
+    year_level:{
+        type: String,
+        default: null
+    },
     created_at:{
         type: Date,
         required: true,
@@ -33,4 +38,4 @@ const userSchema = Schema({
     }
 })
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('Student', studentSchema)

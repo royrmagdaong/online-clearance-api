@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt')
 const Role = require('../models/role');
 const generateCode = require('../middlewares/generateCode')
 const User = require('../models/user')
+const Student = require('../models/student')
+const HeadDepartment = require('../models/head-department')
 
 let password = 'password'
 
@@ -72,7 +74,9 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                     
                         // clear models
                         await seeder.clearModels([
-                            'User'
+                            'User',
+                            'Student',
+                            'HeadDepartment'
                         ], async ()=> {
                             // populate models
                             await seeder.populateModels(data, async () => {
