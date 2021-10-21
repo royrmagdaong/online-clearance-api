@@ -35,7 +35,7 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                             'documents': [
                                 {
                                     role: roles.ADMIN,
-                                    email: "admin@gmail.com",
+                                    email: "admin@ptc.com",
                                     password: hashPassword,
                                     verificationCode: generateCode(),
                                     is_verified: true
