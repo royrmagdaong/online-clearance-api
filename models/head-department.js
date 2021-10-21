@@ -7,7 +7,11 @@ const headDepartmentSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
-    name:{
+    in_charge:{
+        type: String,
+        required: true
+    },
+    department_name:{
         type: String,
         required: true
     },

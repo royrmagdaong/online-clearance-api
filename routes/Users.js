@@ -33,13 +33,6 @@ router.post('/create',
     UserController.createUser
 )
 
-// update user info
-router.patch('/update/:id', 
-    authenticate, 
-    getUser, 
-    UserController.updateUserInfo
-)
-
 // deactivate user
 router.post('/delete/:id', 
     authenticate, 

@@ -10,7 +10,7 @@ module.exports = {
             let regexp = new RegExp("^"+ req.body.searchString, 'i')
             const headDepartments = await HeadDepartment.find({ 
                 $and: [
-                    { $or: [{email: regexp}, {name: regexp}, {mobile_number: regexp}, {telephone_number: regexp} ] },
+                    { $or: [{email: regexp}, {in_charge: regexp}, {department_name: regexp} , {mobile_number: regexp}, {telephone_number: regexp} ] },
                     { deleted_at: null }
                 ]
             })
@@ -32,7 +32,8 @@ module.exports = {
     registerDepartment: async (req, res) => {
         try {
             let user
-            let name = req.body.name
+            let in_charge = req.body.in_charge
+            let department_name = req.body.department_name
             let email = req.body.email
             let password = req.body.password
             let mobile_number = req.body.mobile_number
@@ -44,10 +45,10 @@ module.exports = {
                 }else{
                     user = new User({
                         role: 'head-department',
-                        name: name,
                         email: email,
                         password: hashPassword,
-                        verificationCode: generateCode()
+                        verificationCode: generateCode(),
+                        is_verified: true
                     })
                     await user.save( async (err, newUser) => {
                         if(err){ res.status(500).json({ response: false, message:err.message}) }
@@ -55,7 +56,8 @@ module.exports = {
                             const department = new HeadDepartment({
                                 user_id: newUser._id,
                                 email: email,
-                                name: name,
+                                in_charge: in_charge,
+                                department_name: department_name,
                                 mobile_number: mobile_number,
                                 telephone_number: telephone_number
                             })
@@ -63,10 +65,10 @@ module.exports = {
                                 if(err){ res.status(500).json({ response: false, message:err.message }) }
                                 if(newDepartment){
                                     res.status(201).json({
-                                        response: true, 
-                                        user: { name, email, user_id: newUser._id },
+                                        response: true,
                                         department: {
-                                            name,
+                                            in_charge,
+                                            department_name,
                                             email,
                                             mobile_number,
                                             telephone_number
@@ -90,13 +92,15 @@ module.exports = {
                 if(!dept){
                     return res.status(404).json({ message: "Department doesn't exist." })
                 }else{
-                    let name = req.body.name
+                    let department_name = req.body.department_name
+                    let in_charge = req.body.in_charge
                     let email = req.body.email
                     let mobile_number = req.body.mobile_number
                     let telephone_number = req.body.telephone_number
                     let updated = false;
                 
-                    if(name != null ){ dept.name = name; updated = true; }
+                    if(department_name != null ){ dept.department_name = department_name; updated = true; }
+                    if(in_charge != null ){ dept.in_charge = in_charge; updated = true; }
                     if(email != null ){ dept.email = email; updated = true; }
                     if(mobile_number != null ){ dept.mobile_number = mobile_number; updated = true }
                     if(telephone_number != null ){ dept.telephone_number = telephone_number; updated = true }

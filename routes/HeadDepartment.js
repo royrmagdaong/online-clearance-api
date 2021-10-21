@@ -8,7 +8,7 @@ const authenticate = require('../middlewares/authenticate')
 // get all departments
 router.post('/',
     authenticate,
-    authRole(['admin']),
+    authRole(['admin','student']),
     HeadDepartmentController.getAllDepartments
 )
 // get student counts

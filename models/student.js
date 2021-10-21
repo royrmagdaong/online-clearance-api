@@ -7,7 +7,11 @@ const studentSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
-    name:{
+    first_name:{
+        type: String,
+        default: null
+    },
+    last_name:{
         type: String,
         default: null
     },

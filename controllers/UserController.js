@@ -17,7 +17,7 @@ module.exports = {
             
             users = await User.find({ 
                 $and: [
-                    { $or: [ {name: regexp},{email: regexp} ] },
+                    { email: regexp },
                     { deleted_at: null },
                     { role: { $in: [admin, department, student] } }
                 ]
@@ -47,7 +47,6 @@ module.exports = {
                 }else{
                     user = new User({
                         role: req.body.role,
-                        name: req.body.name,
                         email: req.body.email,
                         password: hashPassword,
                         verificationCode: generateCode()
@@ -56,7 +55,7 @@ module.exports = {
                         if(err){
                             res.status(500).json({ response: false, message:err.message})
                         }else{
-                            res.status(201).json({response: true, user: { name: req.body.name, email: req.body.email }})
+                            res.status(201).json({response: true, user: { email: req.body.email }})
                         }
                     })
                     
@@ -78,12 +77,12 @@ module.exports = {
                             res.status(500).json({ err })
                         }else{
                             if(result){
-                                jwt.sign({id: user._id, role: user.role, name: user.name, email: user.email}, process.env.SECRET_KEY, (err, token) => {
+                                jwt.sign({id: user._id, role: user.role, email: user.email}, process.env.SECRET_KEY, (err, token) => {
                                     if(err){
                                         res.status(500).json({ message: err.message, reponse: false })
                                     }else{
                                         res.status(200).json({
-                                            data: { id: user._id, role: user.role, name: user.name, email: user.email, token },
+                                            data: { id: user._id, role: user.role, email: user.email, token },
                                             response: true
                                         })
                                     }
@@ -101,23 +100,6 @@ module.exports = {
             }
         } catch (error) {
             res.status(500).json({ message: "User doesn't exist.", reponse: false })
-        }
-    },
-    // update user info
-    updateUserInfo: async (req, res) => {
-        let name = req.body.name
-        let contact_num = req.body.contact_num
-        let updated = false;
-    
-        if(name != null ){ res.foundUser.name = name; updated = true; }
-        if(contact_num != null ){ res.foundUser.contact_num = contact_num; updated = true }
-        if(updated){ res.foundUser.updated_at = Date.now() }
-    
-        try {
-            let updatedUser = await res.foundUser.save()
-            res.json({ user: updatedUser, message: 'user has been updated' })
-        } catch (error) {
-            res.status(500).json({ message: error.message })
         }
     },
     // delete user

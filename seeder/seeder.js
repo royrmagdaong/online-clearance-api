@@ -4,8 +4,8 @@ const bcrypt = require('bcrypt')
 const Role = require('../models/role');
 const generateCode = require('../middlewares/generateCode')
 const User = require('../models/user')
-const Student = require('../models/student')
 const HeadDepartment = require('../models/head-department')
+const Student = require('../models/student')
 
 let password = 'password'
 
@@ -35,34 +35,12 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                             'documents': [
                                 {
                                     role: roles.ADMIN,
-                                    name: "admin",
                                     email: "admin@gmail.com",
                                     password: hashPassword,
                                     verificationCode: generateCode(),
                                     is_verified: true
                                 }
                             ]
-                        }
-
-                        for(let i = 1; i<4; i++){
-                            console.log('hello world')
-                            Users.documents.push({
-                                role: roles.HEAD_DEPARTMENT,
-                                name: `head department ${i}`,
-                                email: `headdepartment${i}@gmail.com`,
-                                password: hashPassword,
-                                verificationCode: generateCode(),
-                                is_verified: true
-                            })
-
-                            Users.documents.push({
-                                role: roles.STUDENT,
-                                name: `student ${i}`,
-                                email: `student${i}@gmail.com`,
-                                password: hashPassword,
-                                verificationCode: generateCode(),
-                                is_verified: true
-                            })
                         }
             
                         data.push(Users)

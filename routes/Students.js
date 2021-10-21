@@ -17,6 +17,12 @@ router.get('/total-students',
     authRole(['admin']),
     StudentController.getStudentCounts
 )
+// get student
+router.post('/student-info',
+    authenticate,
+    authRole(['admin','student']),
+    StudentController.getStudent
+)
 // register student
 router.post('/create',
     checkEmail, 
@@ -30,8 +36,6 @@ router.patch('/update/:id',
 )
 // verify student
 router.post('/verify',
-    authenticate,
-    authRole(['admin']),
     StudentController.verifyStudent
 )
 
