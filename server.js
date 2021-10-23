@@ -24,11 +24,13 @@ db.once('open', () => console.log('Connected to Database'))
 const UserRoutes = require('./routes/Users')
 const StudentRoutes = require('./routes/Students')
 const DepartmentRoutes = require('./routes/HeadDepartment')
+const ClearanceRoutes = require('./routes/Clearance')
 
 // Routes
 app.use('/user', UserRoutes)
 app.use('/student', StudentRoutes)
 app.use('/head-department', DepartmentRoutes)
+app.use('/clearance', ClearanceRoutes)
 
 
 app.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))

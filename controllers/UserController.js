@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const saltRounds = 10;
 const generateCode = require('../middlewares/generateCode');
-const e = require('cors');
 
 module.exports = {
     // get all user

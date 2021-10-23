@@ -2,22 +2,50 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 const Schema = mongoose.Schema
 
-const userSchema = Schema({
-    role: { type: String, required: true },
-    email:{
-        type: String,
-        required: true
+const clearanceSchema = Schema({
+    student: {
+        type: Schema.Types.ObjectId, 
+        ref: 'Student'
     },
-    password:{
+    course: {
         type: String,
-        required: true
+        default: null
     },
-    verificationCode: { type: String, required: true },
-    is_verified: { type: Boolean, default: false },
+    section: {
+        type: String,
+        default: null
+    },
+    year_level: {
+        type: String,
+        default: null
+    },
+    departments_approved:[String],
+    departments_pending:[String],
+    departments_disapproved:[String],
+    academic_year: {
+        type: String,
+        default: null
+    },
+    semester:{
+        type: String,
+        default: null
+    },
+    completed:{
+        type: Boolean, 
+        default: false
+    },
+    request_approved:{
+        type: Boolean, 
+        default: false
+    },
+    oudated: {
+        type: Boolean, 
+        default: false
+    },
     created_at:{
         type: Date,
         required: true,
-        default: moment(new Date()).format('L')
+        default: moment(new Date()).format()
     },
     updated_at:{
         type: Date,
@@ -29,4 +57,4 @@ const userSchema = Schema({
     }
 })
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('Clearance', clearanceSchema)

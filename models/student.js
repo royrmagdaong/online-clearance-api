@@ -30,7 +30,7 @@ const studentSchema = Schema({
     created_at:{
         type: Date,
         required: true,
-        default: moment(new Date()).format('L')
+        default: moment(new Date()).format()
     },
     updated_at:{
         type: Date,
