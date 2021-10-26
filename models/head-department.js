@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const moment = require('moment')
 const Schema = mongoose.Schema
 
 const headDepartmentSchema = Schema({
@@ -30,7 +29,7 @@ const headDepartmentSchema = Schema({
     created_at:{
         type: Date,
         required: true,
-        default: moment(new Date()).format()
+        default: Date.now
     },
     updated_at:{
         type: Date,

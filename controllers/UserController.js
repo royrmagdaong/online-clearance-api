@@ -104,7 +104,7 @@ module.exports = {
     // delete user
     deleteUser: async (req, res) => {
         let user = await User.findById(req.params.id).where('deleted_at').equals(null)
-        user.deleted_at = Date.now()
+        user.deleted_at = Date.now
     
         try {
             let deletedUser = await user.save()

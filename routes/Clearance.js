@@ -28,5 +28,29 @@ router.post('/create',
     authRole(['student']),
     ClearanceController.createClearance
 )
+// approve clearance
+router.post('/approve-clearance',
+    authenticate, 
+    authRole(['admin']),
+    ClearanceController.approveClearanceRequest
+)
+// request signature
+router.post('/request-signature',
+    authenticate,
+    authRole(['student']),
+    ClearanceController.requestSignature
+)
+// get all student who requested signature
+router.post('/students-signature-request',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getStudentRequest
+)
+// approve signature request
+router.post('/approve-signature-request',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.approveSignatureRequest
+)
 
 module.exports = router

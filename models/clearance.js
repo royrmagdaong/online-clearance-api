@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const moment = require('moment')
 const Schema = mongoose.Schema
 
 const clearanceSchema = Schema({
@@ -38,14 +37,14 @@ const clearanceSchema = Schema({
         type: Boolean, 
         default: false
     },
-    oudated: {
+    outdated: {
         type: Boolean, 
         default: false
     },
     created_at:{
         type: Date,
         required: true,
-        default: moment(new Date()).format()
+        default: Date.now
     },
     updated_at:{
         type: Date,
