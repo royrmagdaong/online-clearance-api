@@ -1,2 +1,2 @@
 web: npm run seed
-web: npm run start
+web: node -r dotenv/config server.js
