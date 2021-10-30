@@ -28,7 +28,7 @@ router.post('/create',
     authRole(['student']),
     ClearanceController.createClearance
 )
-// approve clearance
+// approve clearance  
 router.post('/approve-clearance',
     authenticate, 
     authRole(['admin']),
