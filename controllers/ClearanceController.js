@@ -1,6 +1,5 @@
 const Clearance = require('../models/clearance')
 const HeadDepartment = require('../models/head-department')
-const jwt = require('jsonwebtoken')
 
 module.exports = {
     // get over all clearances
