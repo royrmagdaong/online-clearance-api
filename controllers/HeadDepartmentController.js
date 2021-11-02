@@ -14,10 +14,30 @@ module.exports = {
                     { deleted_at: null }
                 ]
             })
-            res.json({response: true, data: headDepartments})
+            return res.json({response: true, data: headDepartments})
         } catch (error) {
-            res.status(500).json({ response: false, message: error.message })
+            return res.status(500).json({ response: false, message: error.message })
         }           
+    },
+    getAllDepartmentsByCourse: async (req, res) => {
+        try {
+            let course = req.body.course
+            const headDepartments = await HeadDepartment.find({
+                $or:[
+                    { department_name: {$regex:course} },
+                    { department_name: {$regex:"^((?!,).)*$"} },
+                ]
+            }).exec(async (err, departments) =>{
+                if(err) return res.status(500).json({response: false, message: err.message})
+                if(departments){
+                    return res.json({response: true, data: departments})
+                }else{
+                    return res.json({response: false, message: 'No departments found.'})
+                }
+            })
+        } catch (error) {
+            return res.json({response: false, message: error.message})
+        }
     },
     // get user total count
     getDepartmentsCounts: async (req, res) => {

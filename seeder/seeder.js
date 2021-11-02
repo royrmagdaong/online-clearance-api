@@ -36,7 +36,8 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         './models/user',
                         './models/student',
                         './models/head-department',
-                        './models/course'
+                        './models/course',
+                        './models/clearance'
                     ])
                 
                     // clear models
@@ -44,7 +45,8 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         'User',
                         'Student',
                         'HeadDepartment',
-                        'Course'
+                        'Course',
+                        'Clearance'
                     ], async ()=> {
 
                         let user = await new User({
@@ -201,7 +203,7 @@ const student = [
         first_name: 'John',
         last_name: 'Doe',
         course: 'BSIT',
-        section: 'A',
+        section: 'B',
         year_level: '1st'
     },
     {

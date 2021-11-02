@@ -11,7 +11,13 @@ router.post('/',
     authRole(['admin','student']),
     HeadDepartmentController.getAllDepartments
 )
-// get student counts
+// get all departments by course
+router.post('/departments-bycourse',
+    authenticate,
+    authRole(['student']),
+    HeadDepartmentController.getAllDepartmentsByCourse
+)
+// get department counts
 router.get('/total-departments',
     authenticate,
     authRole(['admin']),
