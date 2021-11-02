@@ -151,7 +151,7 @@ module.exports = {
                         if(clearance.length>0){
                             return res.json({ response: true, data: clearance })
                         }else{
-                            return res.json({ response: false, data: [] })
+                            return res.json({ response: true, data: [] })
                         }
                     })
                 }else{
