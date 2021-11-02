@@ -76,7 +76,7 @@ module.exports = {
                             res.status(500).json({ err })
                         }else{
                             if(result){
-                                jwt.sign({id: user._id, role: user.role, email: user.email}, process.env.SECRET_KEY, (err, token) => {
+                                jwt.sign({id: user._id, role: user.role, email: user.email}, process.env.SECRET_KEY, { expiresIn: '1d' }, (err, token) => {
                                     if(err){
                                         res.status(500).json({ message: err.message, reponse: false })
                                     }else{
