@@ -42,6 +42,8 @@ module.exports = {
             let section = req.body.section
             let year_level = req.body.year_level
             let existing = false
+            let pending_request = false
+            let incomplete = false
 
             await Clearance.find({student:student}, async(err, clearances)=>{
                 if(err){ res.status(500).json({ response: false, message:err.message})}
@@ -52,8 +54,20 @@ module.exports = {
                                 existing = true
                             }
                         }
+                        if(!clearances[i].request_approved){
+                            pending_request = true
+                        }
+                        if(!clearances[i].completed){
+                            incomplete = true
+                        }
                     }
-                    if(!existing){
+                    if(existing){
+                        res.json({ response: false, message:'You have already requested a clearance form for this semester on this academic year.'})
+                    }else if(pending_request){
+                        res.json({ response: false, message:'Unable to request clearance form because you have PENDING request.'})
+                    }else if(incomplete){
+                        res.json({ response: false, message:'Unable to request clearance form because you have INCOMPLETE clearance form.'})
+                    }else{
                         clearance = new Clearance({
                             student: student,
                             academic_year: academic_year,
@@ -62,14 +76,19 @@ module.exports = {
                             section: section,
                             year_level: year_level
                         })
-                        await clearance.save((err, newClearance) => {
+                        await clearance.save(async (err, newClearance) => {
                             if(err){ res.status(500).json({ response: false, message:err.message}) }
                             if(newClearance){
-                                res.status(201).json({response: true, message: 'Request Successful'})
+                                await Clearance.updateMany({student:student, _id:{$ne:newClearance._id}}, {outdated: true}).exec((err, updatedClearances)=>{
+                                    if(err){
+                                        res.json({response: false, message: err.message})
+                                    }else{
+                                        res.status(201).json({response: true, message: 'Request Successful'})
+                                    }
+                                })
+                                
                             }
                         })
-                    }else{
-                        res.json({ response: false, message:'You have already requested a clearance form for this semester on this academic year.'})
                     }
                 }
             })

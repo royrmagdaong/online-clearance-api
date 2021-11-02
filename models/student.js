@@ -22,6 +22,10 @@ const studentSchema = Schema({
         type: String,
         default: null
     },
+    section:{
+        type: String,
+        default: null
+    },
     year_level:{
         type: String,
         default: null
