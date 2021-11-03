@@ -184,8 +184,9 @@ module.exports = {
     approveSignatureRequest: async(req, res) => {
         try {
             let clearance_id = req.body.clearance_id
+            let user_id = res.user.id
 
-            await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
+            await HeadDepartment.findOne({user_id: user_id}).exec(async (err, foundDept) => {
                 if(err) return res.status(500).json({response:false, message: err.message})
                 if(foundDept){
                     await Clearance.findOne({
@@ -203,6 +204,12 @@ module.exports = {
                             }
                             clearance.departments_approved.push(foundDept._id)
                             let updatedClearance = await clearance.save()
+
+                            // check if clearance is completed
+                            if(clearance.departments_approved.length === 6){
+                                clearance.completed = true;
+                                await clearance.save()
+                            }
                             return res.json({ response: true, data: updatedClearance })
                         }else{
                             return res.json({ response: false, data: [] })
