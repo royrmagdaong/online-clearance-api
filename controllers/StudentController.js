@@ -54,6 +54,7 @@ module.exports = {
             let password = req.body.password
             let course = req.body.course
             let year_level = req.body.year_level
+            let section = req.body.section
 
             await bcrypt.hash(password, saltRounds, async (err, hashPassword) => {
                 if(err){
@@ -74,7 +75,8 @@ module.exports = {
                                 first_name: first_name,
                                 last_name: last_name,
                                 course: course,
-                                year_level: year_level
+                                year_level: year_level,
+                                section: section
                             })
                             await student.save((err, newStudent)=> {
                                 if(err){ res.status(500).json({ response: false, message:err.message }) }
@@ -87,7 +89,8 @@ module.exports = {
                                             email: email, 
                                             user_id: newUser._id,
                                             course: course,
-                                            year_level: year_level
+                                            year_level: year_level,
+                                            section: section
                                         },
                                     })
                                 }
@@ -113,11 +116,13 @@ module.exports = {
                     let last_name = req.body.last_name
                     let course = req.body.course
                     let year_level = req.body.year_level
+                    let section = req.body.section
                 
                     if(first_name != null ){ student.first_name = first_name; updated = true; }
                     if(last_name != null ){ student.last_name = last_name; updated = true; }
                     if(course != null ){ student.course = course; updated = true }
                     if(year_level != null ){ student.year_level = year_level; updated = true }
+                    if(section != null ){ student.section = section; updated = true }
                     if(updated){ student.updated_at = Date.now() }
                 
                     try {
