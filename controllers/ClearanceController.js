@@ -181,6 +181,34 @@ module.exports = {
             return res.status(500).json({ response: false, message: error.message })
         }
     },
+    // get approved students by department
+    getApprovedStudentsByDept: async (req, res) => {
+        try {
+            await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
+                if(err) return res.status(500).json({response:false, message: err.message})
+                if(foundDept){
+                    await Clearance.find({
+                        request_approved: true,
+                        departments_approved: foundDept._id
+                    })
+                    .populate('student',['first_name','last_name','email'])
+                    .exec(async (err, clearance) => {
+                        if(err) return res.status(500).json({ response: false, message: err.message })
+                        if(clearance.length>0){
+                            return res.json({ response: true, data: clearance })
+                        }else{
+                            return res.json({ response: true, data: [] })
+                        }
+                    })
+                }else{
+                    res.json({response:false, message: 'not found', data: []})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
+    // approve student request
     approveSignatureRequest: async(req, res) => {
         try {
             let clearance_id = req.body.clearance_id

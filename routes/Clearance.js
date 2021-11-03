@@ -46,6 +46,12 @@ router.post('/students-signature-request',
     authRole(['head-department']),
     ClearanceController.getStudentRequest
 )
+// get all approved students by department
+router.post('/approved-students',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getApprovedStudentsByDept
+)
 // approve signature request
 router.post('/approve-signature-request',
     authenticate,
