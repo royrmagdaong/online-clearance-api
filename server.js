@@ -25,12 +25,14 @@ const UserRoutes = require('./routes/Users')
 const StudentRoutes = require('./routes/Students')
 const DepartmentRoutes = require('./routes/HeadDepartment')
 const ClearanceRoutes = require('./routes/Clearance')
+const CourseRoutes = require('./routes/Course')
 
 // Routes
 app.use('/user', UserRoutes)
 app.use('/student', StudentRoutes)
 app.use('/head-department', DepartmentRoutes)
 app.use('/clearance', ClearanceRoutes)
+app.use('/course', CourseRoutes)
 
 
 app.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))
