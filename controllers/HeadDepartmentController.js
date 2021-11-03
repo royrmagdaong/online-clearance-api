@@ -3,8 +3,24 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const generateCode = require('../middlewares/generateCode')
 const saltRounds = 10;
+const fs = require('fs')
 
 module.exports = {
+    getDepartment: async (req, res) => {
+        try {
+            let user_id = res.user.id
+            await HeadDepartment.find({user_id: user_id}).exec((error,dept)=>{
+                if(error) return res.status(500).json({ response: false, message: error.message })
+                if(dept){
+                    return res.status(201).json({ response: true, data: dept })
+                }else{
+                    return res.status(404).json({ response: false, message: 'not found.' })
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
     getAllDepartments: async (req, res) => {
         try {
             let regexp = new RegExp("^"+ req.body.searchString, 'i')
@@ -136,6 +152,29 @@ module.exports = {
             })
         } catch (error) {
             return res.status(500).json({ message: error.message })
+        }
+    },
+    uploadSignatureImg: async (req, res) => {
+        try {
+            var img = fs.readFileSync(req.file.path);
+            var encode_image = img.toString('base64');
+            let user_id = res.user.id
+
+            await HeadDepartment.findOne({user_id: user_id}).exec( async (err, dept)=>{
+                if(err) return res.status(500).json({response: false, message: err.message})
+                if(dept){
+                    dept.signature.set('type', req.file.mimetype)
+                    dept.signature.set('base', 'base64')
+                    dept.signature.set('path', req.file.path)
+                    dept.signature.set('img', encode_image)
+                    await dept.save()
+                    return res.status(201).json({response: true, data: dept})
+                }else{
+                    return res.status(500).json({response: false, message: 'nothing found.'})
+                }
+            }) 
+        } catch (error) {
+            return res.status(500).json({response: false, message: error.message})
         }
     }
 }

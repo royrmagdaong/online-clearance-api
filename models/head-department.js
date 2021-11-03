@@ -6,6 +6,11 @@ const headDepartmentSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
+    signature:{
+        type: Map,
+        of: String,
+        default: {}
+    },
     in_charge:{
         type: String,
         required: true
