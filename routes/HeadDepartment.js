@@ -51,7 +51,7 @@ router.post('/update/:id',
 // update department details
 router.post('/upload-signature',
     authenticate,
-    authRole(['head-department']),
+    authRole(['admin']),
     upload.single('signature'),
     HeadDepartmentController.uploadSignatureImg
 )
