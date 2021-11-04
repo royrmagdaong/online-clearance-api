@@ -18,7 +18,10 @@ const clearanceSchema = Schema({
         type: String,
         default: null
     },
-    departments_approved:[String],
+    departments_approved:[{
+        type: Map,
+        of: String
+    }],
     departments_pending:[String],
     departments_disapproved:[String],
     academic_year: {

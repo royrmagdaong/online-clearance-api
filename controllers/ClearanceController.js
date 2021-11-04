@@ -230,7 +230,10 @@ module.exports = {
                             if(index > -1){
                                 clearance.departments_pending.splice(index,1)
                             }
-                            clearance.departments_approved.push(foundDept._id)
+                            clearance.departments_approved.push({
+                                dept_id: foundDept._id,
+                                signature:foundDept.signature
+                            })
                             let updatedClearance = await clearance.save()
 
                             // check if clearance is completed

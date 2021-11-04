@@ -7,6 +7,7 @@ const User = require('../models/user')
 const HeadDepartment = require('../models/head-department')
 const Student = require('../models/student')
 const Course = require('../models/course')
+const fs = require('fs')
 
 let password = 'password'
 
@@ -103,7 +104,7 @@ const department = [
         email: "ithead@ptc.com"
     },
     {
-        name: "Head Department (BSOA,COA,CHRM)",
+        name: "Department Head (BSOA,COA,CHRM)",
         in_charge: "Meliza Qorazon",
         email: "oahead@ptc.com"
     }
@@ -225,9 +226,11 @@ const populateUserDepartment = async (roles, hashPassword) => {
             verificationCode: generateCode(),
             is_verified: true
         })
-        user.save(async (err, newUser)=>{
+
+        await user.save(async (err, newUser)=>{
             if(err){ return console.log('failed to create user department.') }
             if(newUser){
+
                 let dept = await new HeadDepartment({
                     user_id: newUser._id,
                     department_name: department[i].name,
@@ -236,6 +239,12 @@ const populateUserDepartment = async (roles, hashPassword) => {
                     telephone_number: `56533${i}`,
                     email: department[i].email
                 })
+
+                dept.signature.set('type', 'img/png')
+                dept.signature.set('base', 'base64')
+                dept.signature.set('path', `./uploads/signature/${department[i].email}`)
+                dept.signature.set('img', await fs.readFileSync(`./uploads/signature/${department[i].email}.png`).toString('base64'))
+
                 await dept.save(async (err, newDept) =>{
                     if(err){ return console.log('failed to create user department.') }
                     if(newDept){
