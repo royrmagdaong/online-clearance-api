@@ -189,7 +189,7 @@ module.exports = {
                 if(foundDept){
                     await Clearance.find({
                         request_approved: true,
-                        departments_approved: foundDept._id
+                        'departments_approved.dept_id': foundDept._id
                     })
                     .populate('student',['first_name','last_name','email'])
                     .exec(async (err, clearance) => {
