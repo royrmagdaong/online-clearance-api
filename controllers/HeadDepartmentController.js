@@ -159,22 +159,22 @@ module.exports = {
             var img = fs.readFileSync(req.file.path);
             var encode_image = img.toString('base64');
             let id = req.body.dept_id
-            // let in_charge = req.body.in_charge
-            // let department_name = req.body.department_name
-            // let mobile_number = req.body.mobile_number
-            // let telephone_number = req.body.telephone_number
+            let in_charge = req.body.in_charge
+            let department_name = req.body.department_name
+            let mobile_number = req.body.mobile_number
+            let telephone_number = req.body.telephone_number
 
-            await HeadDepartment.findOne({id:id}).exec( async (err, dept)=>{
+            await HeadDepartment.findOne({_id:id}).exec( async (err, dept)=>{
                 if(err) return res.status(500).json({response: false, message: err.message})
                 if(dept){
                     dept.signature.set('type', req.file.mimetype)
                     dept.signature.set('base', 'base64')
                     dept.signature.set('path', req.file.path)
                     dept.signature.set('img', encode_image)
-                    // dept.in_charge = in_charge
-                    // dept.department_name = department_name
-                    // dept.mobile_number = mobile_number
-                    // dept.telephone_number = telephone_number
+                    dept.in_charge = in_charge
+                    dept.department_name = department_name
+                    dept.mobile_number = mobile_number
+                    dept.telephone_number = telephone_number
                     dept.updated_at = Date.now()
                     await dept.save()
                     return res.status(201).json({response: true, data: dept, message: 'Signature updated successfully'})
