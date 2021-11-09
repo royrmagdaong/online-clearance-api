@@ -223,6 +223,7 @@ module.exports = {
                         outdated: false, 
                         departments_pending: foundDept._id
                     })
+                    .populate('student',['first_name','last_name','email'])
                     .exec(async (err, clearance) => {
                         if(err) return res.status(500).json({ response: false, message: err.message })
                         if(clearance){
@@ -241,6 +242,10 @@ module.exports = {
                                 clearance.completed = true;
                                 await clearance.save()
                             }
+                            // socket io
+                            console.log(clearance.student.email)
+                            req.io.emit(clearance.student.email, `${foundDept.department_name} has been approved your signature request.`)
+
                             return res.json({ response: true, data: updatedClearance })
                         }else{
                             return res.json({ response: false, data: [] })

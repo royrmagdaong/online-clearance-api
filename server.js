@@ -3,11 +3,19 @@ require('dotenv').config()
 const express = require('express')
 var cors = require('cors');
 const app = express()
+const {createServer} = require('http')
+const {Server} = require('socket.io')
 const mongoose = require('mongoose')
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors:{ origin: '*'} });
 
 app.use(express.json())
 app.use(cors());
 
+app.use((req, res, next)=>{
+    req.io = io
+    next()
+})
 
 // Database connection
 mongoose.connect(process.env.DATABASE_URL, {
@@ -35,4 +43,5 @@ app.use('/clearance', ClearanceRoutes)
 app.use('/course', CourseRoutes)
 
 
-app.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))
+// app.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))
+httpServer.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))
