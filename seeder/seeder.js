@@ -140,27 +140,33 @@ const student = [
 const course = [
     {
         code: "BSIT",
-        description: "BS in Information Technology"
+        description: "BS in Information Technology",
+        sections: ['A','B','C','D']
     },
     {
         code: "BSOA",
-        description: "BS in Office Administration"
+        description: "BS in Office Administration",
+        sections: ['A','B','C','D']
     },
     {
         code: "COA",
-        description: "Certificate in Office Administration"
+        description: "Certificate in Office Administration",
+        sections: ['A','B','C','D']
     },
     {
         code: "CCS",
-        description: "Certificate in Computer Science"
+        description: "Certificate in Computer Science",
+        sections: ['A','B','C','D']
     },
     {
         code: "CHS",
-        description: "Computer Hardware Servicing NCII"
+        description: "Computer Hardware Servicing NCII",
+        sections: ['A','B','C','D']
     },
     {
         code: "CHRM",
-        description: "Certificate in Hotel and Restaurant Management"
+        description: "Certificate in Hotel and Restaurant Management",
+        sections: ['A','B','C','D']
     }
 ]
 
@@ -168,7 +174,8 @@ const populateCourse = async () => {
     for(let i = 0; i<course.length;i++){
         let course_ = await new Course({
             code: course[i].code,
-            description: course[i].description
+            description: course[i].description,
+            sections: course[i].sections
         })
         await course_.save((err, newCourse) =>{
             if(err){ return console.log('failed to create course.') }

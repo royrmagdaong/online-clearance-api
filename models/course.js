@@ -10,6 +10,10 @@ const courseSchema = Schema({
         type: String,
         required: true
     },
+    sections:{
+        type: Array,
+        required: true
+    },
     created_at:{
         type: Date,
         required: true,

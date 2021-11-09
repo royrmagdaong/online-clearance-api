@@ -176,8 +176,12 @@ module.exports = {
                     dept.mobile_number = mobile_number
                     dept.telephone_number = telephone_number
                     dept.updated_at = Date.now()
-                    await dept.save()
-                    return res.status(201).json({response: true, data: dept, message: 'Signature updated successfully'})
+                    try {
+                        await dept.save()
+                        return res.status(201).json({response: true, data: dept, message: 'Signature updated successfully'})
+                    } catch (error) {
+                        return res.status(500).json({response: false, message: error.message})
+                    }
                 }else{
                     return res.status(500).json({response: false, message: 'nothing found.'})
                 }
