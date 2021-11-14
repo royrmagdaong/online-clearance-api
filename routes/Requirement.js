@@ -9,7 +9,14 @@ const authenticate = require('../middlewares/authenticate')
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/requirements' })
 
-// get requirement
+// get requirements
+router.post('/',
+    authenticate,
+    authRole(['head-department']),
+    RequirementsController.getRequirements
+)
+
+// view requirement
 router.get('/view/:id',
     RequirementsController.viewRequirements
 )
