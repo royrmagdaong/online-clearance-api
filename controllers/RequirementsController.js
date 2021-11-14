@@ -66,4 +66,33 @@ module.exports = {
             return res.json({response: false, message: error.message})
         }
     },
+    updateRequirements: async (req, res) => {
+        try {
+            let requirement_id = req.body.req_id
+            let title = req.body.title_edit
+            let instructions = req.body.instructions_edit
+            let old_filepath = req.body.path
+            let originalFileName = req.file.originalname
+            let mimetype = req.file.mimetype
+            let filename = req.file.filename
+            let path = req.file.path
+
+            await Requirements.findOne({_id: requirement_id}).exec(async (error,requirement) => {
+                if(error) res.status(500).json({response:false,message:error.message})
+                requirement.title = title
+                requirement.instructions = instructions
+                requirement.originalFileName = originalFileName
+                requirement.mimetype = mimetype
+                requirement.filename = filename
+                requirement.path = path
+                await requirement.save(error=>{
+                    if(error) res.status(500).json({response:false,message:error.message})
+                    fs.unlinkSync(old_filepath);
+                    return res.status(200).json({response:true,message:'Updated Successfully!'})
+                })
+            })
+        } catch (error) {
+            return res.status(500).json({response:false,message:error.message})
+        }
+    }
 }

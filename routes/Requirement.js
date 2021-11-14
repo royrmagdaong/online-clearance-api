@@ -29,4 +29,12 @@ router.post('/upload-requirements',
     RequirementsController.uploadRequirements
 )
 
+// update requirements
+router.post('/update-requirements',
+    authenticate,
+    authRole(['head-department']),
+    upload.single('requirements'),
+    RequirementsController.updateRequirements
+)
+
 module.exports = router
