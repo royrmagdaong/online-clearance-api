@@ -15,7 +15,6 @@ module.exports = {
     },
     viewRequirements: async (req, res) => {
         try {
-            console.log(req.params)
             let file_name = req.params.id
             // let mime_type = params.mime_type
 
@@ -39,8 +38,6 @@ module.exports = {
     },
     uploadRequirements: async (req, res) => {
         try {
-            // var img = fs.readFileSync(req.file.path);
-            console.log(req.file)
             let user_id = req.body.user_id
             let title = req.body.title
             let instructions = req.body.instructions
