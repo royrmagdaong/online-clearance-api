@@ -2,7 +2,7 @@ const Requirements = require('../models/requirement')
 const fs = require('fs')
 
 module.exports = {
-    getRequirements: async (req, res) => {
+    viewRequirements: async (req, res) => {
         try {
             console.log(req.params)
             let file_name = req.params.id

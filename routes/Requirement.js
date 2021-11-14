@@ -10,8 +10,8 @@ const multer  = require('multer')
 const upload = multer({ dest: 'uploads/requirements' })
 
 // get requirement
-router.get('/:id',
-    RequirementsController.getRequirements
+router.get('/view/:id',
+    RequirementsController.viewRequirements
 )
 
 // upload requirements
