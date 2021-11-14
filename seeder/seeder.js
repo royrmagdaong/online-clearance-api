@@ -7,7 +7,9 @@ const User = require('../models/user')
 const HeadDepartment = require('../models/head-department')
 const Student = require('../models/student')
 const Course = require('../models/course')
+const Requirements = require('../models/requirement')
 const fs = require('fs')
+const path = require('path');
 
 let password = 'password'
 
@@ -38,7 +40,8 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         './models/student',
                         './models/head-department',
                         './models/course',
-                        './models/clearance'
+                        './models/clearance',
+                        './models/requirement',
                     ])
                 
                     // clear models
@@ -47,7 +50,8 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         'Student',
                         'HeadDepartment',
                         'Course',
-                        'Clearance'
+                        'Clearance',
+                        'Requirements'
                     ], async ()=> {
 
                         // create admin user
@@ -61,6 +65,9 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
 
                         // populate course
                         await populateCourse()
+
+                        // clear all files from requirements directory
+                        await clearRequirements()
 
                         await setTimeout(()=>{
                             seeder.disconnect();
@@ -281,4 +288,19 @@ const createAdminUser = async (roles, hashPassword) => {
             console.log('User Admin created.')
         }
     })
+}
+
+const clearRequirements = async () => {
+    const directory = 'uploads/requirements';
+
+    fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+
+    for (const file of files) {
+        fs.unlink(path.join(directory, file), err => {
+            if (err) throw err;
+            console.log(`${file} from uploads/requirements is deleted.`)
+        });
+    }
+    });
 }
