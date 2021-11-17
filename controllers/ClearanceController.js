@@ -142,9 +142,9 @@ module.exports = {
             let files = req.files
             
             requirements = new Requirements({
-                user_id: user_id,
-                department_id: department_id,
-                clearance_id: clearance_id,
+                student: user_id,
+                department: department_id,
+                clearance: clearance_id,
                 message: message,
                 files: files
             })
@@ -231,7 +231,7 @@ module.exports = {
         }
     },
     // approve student request
-    approveSignatureRequest: async(req, res) => {
+    approveSignatureRequest: async (req, res) => {
         try {
             let clearance_id = req.body.clearance_id
             let user_id = res.user.id
@@ -279,6 +279,24 @@ module.exports = {
             })
         } catch (error) {
             res.status(500).json({response:false, message: error.message})
+        }
+    },
+    getStudentRequirements: async (req, res) => {
+        try {
+            let department_id = req.body.department_id
+            let clearance_id = req.body.clearance_id
+
+            await Requirements.findOne({
+                $and: [{department: department_id}, {clearance: clearance_id}]
+            })
+            .populate('clearance', ['academic_year','semester'])
+            .populate('student')
+            .exec((error, requirements)=>{
+                if(error) return res.status(500).json({response:false, message: error.message})
+                return res.status(200).json({response: true, data: requirements, message: 'success' })
+            })
+        } catch (error) {
+            return res.status(500).json({response:false, message: error.message})
         }
     }
 }

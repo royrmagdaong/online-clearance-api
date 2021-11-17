@@ -63,5 +63,11 @@ router.post('/approve-signature-request',
     authRole(['head-department']),
     ClearanceController.approveSignatureRequest
 )
+// get student requirements
+router.post('/student-requirements',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getStudentRequirements
+)
 
 module.exports = router

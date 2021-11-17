@@ -6,11 +6,15 @@ const requirementSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
-    clearance_id:{
+    student: {
+        type: Schema.Types.ObjectId, 
+        ref: 'Student'
+    },
+    clearance:{
         type: Schema.Types.ObjectId, 
         ref: 'Clearance'
     },
-    department_id: {
+    department: {
         type: Schema.Types.ObjectId, 
         ref: 'HeadDepartment'
     },
