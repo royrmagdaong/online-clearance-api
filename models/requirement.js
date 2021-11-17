@@ -6,6 +6,24 @@ const requirementSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
+    clearance_id:{
+        type: Schema.Types.ObjectId, 
+        ref: 'Clearance'
+    },
+    department_id: {
+        type: Schema.Types.ObjectId, 
+        ref: 'HeadDepartment'
+    },
+    message: {
+        type: String,
+        default: null
+    },
+    files: [
+        {
+            type: Map,
+            of: String
+        }
+    ],
     title:{
         type: String,
         default: null

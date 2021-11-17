@@ -1,5 +1,7 @@
 const Clearance = require('../models/clearance')
 const HeadDepartment = require('../models/head-department')
+const Requirements = require('../models/requirement')
+const fs = require('fs')
 
 module.exports = {
     // get over all clearances
@@ -131,22 +133,42 @@ module.exports = {
     // clearance request signature
     requestSignature: async (req, res) => {
         try {
+
+            // return res.json({response: true, data: req.files, message: 'Your requirements are uploaded successfully!'})
             let department_id = req.body.department_id
             let clearance_id = req.body.clearance_id
+            let user_id = req.body.user_id
+            let message = req.body.message
+            let files = req.files
+            
+            requirements = new Requirements({
+                user_id: user_id,
+                department_id: department_id,
+                clearance_id: clearance_id,
+                message: message,
+                files: files
+            })
 
-            await Clearance.findOne({_id: clearance_id, request_approved: true, outdated: false})
-            .exec(async (err, clearance) => {
-                if(err) { return res.status(500).json({ response: false, message: err.message }) }
-                if(clearance){
-                    if(clearance.departments_pending.includes(department_id)){
-                        return res.status(500).json({ response: false, message: 'Already requested for this department.' })
-                    }
-                    clearance.departments_pending.push(department_id)
-                    clearance.updated_at = Date.now()
-                    let updatedClearance = await clearance.save()
-                    return await res.json({ response: true, message: 'Signature Requested.', data: updatedClearance })
-                }else{
-                    return res.status(500).json({ response: false, message: 'Clearance not found.' })
+            await requirements.save(async (error, newRequirement) => {
+                if(error) return res.json({response: false, message: error.message})
+                if(newRequirement){
+                    // return res.json({response: true, message: 'Requirements Uploaded successfully.'})
+
+                    await Clearance.findOne({_id: clearance_id, request_approved: true, outdated: false})
+                    .exec(async (err, clearance) => {
+                        if(err) { return res.status(500).json({ response: false, message: err.message }) }
+                        if(clearance){
+                            if(clearance.departments_pending.includes(department_id)){
+                                return res.status(500).json({ response: false, message: 'Already requested for this department.' })
+                            }
+                            clearance.departments_pending.push(department_id)
+                            clearance.updated_at = Date.now()
+                            let updatedClearance = await clearance.save()
+                            return await res.json({ response: true, message: 'Signature Requested.', data: updatedClearance })
+                        }else{
+                            return res.status(500).json({ response: false, message: 'Clearance not found.' })
+                        }
+                    })
                 }
             })
         } catch (error) {

@@ -4,6 +4,10 @@ const ClearanceController = require('../controllers/ClearanceController')
 const authRole = require('../middlewares/authRole')
 const authenticate = require('../middlewares/authenticate')
 
+// for file uploads
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/requirements' })
+
 // get all clearances
 router.post('/',
     authenticate,
@@ -38,6 +42,7 @@ router.post('/approve-clearance',
 router.post('/request-signature',
     authenticate,
     authRole(['student']),
+    upload.array('requirements', 10),
     ClearanceController.requestSignature
 )
 // get all student who requested signature
