@@ -4,7 +4,13 @@ const fs = require('fs')
 module.exports = {
     getRequirements: async (req, res) => {
         try {
-            let id = res.user.id
+            let id
+            if(res.user.role === 'student'){
+                id = req.body.department_id
+            }else{
+                id = res.user.id
+            }
+            
             await Requirements.find({user_id:id}).exec((error, requirements) => {
                 if(error) return res.status(500).json({response: false, message: error.message})
                 return res.status(200).json({response: true, data: requirements})

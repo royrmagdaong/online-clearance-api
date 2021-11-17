@@ -12,7 +12,7 @@ const upload = multer({ dest: 'uploads/requirements' })
 // get requirements
 router.post('/',
     authenticate,
-    authRole(['head-department']),
+    authRole(['head-department', 'student']),
     RequirementsController.getRequirements
 )
 
