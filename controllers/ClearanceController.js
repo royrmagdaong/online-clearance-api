@@ -225,9 +225,9 @@ module.exports = {
                             { 
                                 $and: [
                                     { course: { $in: course } },
-                                    // { section: section },
+                                    { section: { $in: section } },
                                     { year_level: { $in: year_level } },
-                                    // { semester: semester },
+                                    { semester: { $in: semester } },
                                     // { academic_year: academic_year }
                                 ]
                             }
