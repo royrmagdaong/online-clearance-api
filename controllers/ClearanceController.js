@@ -213,7 +213,7 @@ module.exports = {
             let semester = req.body.semester
             let year_level = req.body.year_level
             let academic_year = req.body.academic_year
-            let regexp = new RegExp("^"+ searchString, 'i')
+            
 
             await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
                 if(err) return res.status(500).json({response:false, message: err.message})
@@ -228,7 +228,7 @@ module.exports = {
                                     { section: { $in: section } },
                                     { year_level: { $in: year_level } },
                                     { semester: { $in: semester } },
-                                    // { academic_year: academic_year }
+                                    { academic_year: { $in: academic_year } }
                                 ]
                             }
                         ]
@@ -237,7 +237,13 @@ module.exports = {
                     .exec(async (err, clearance) => {
                         if(err) return res.status(500).json({ response: false, message: err.message })
                         if(clearance.length>0){
-                            return res.json({ response: true, data: clearance })
+                            let filteredClearanceByStudentDetails = await clearance.filter(item=>{
+                                return (
+                                    item.student.first_name.toLowerCase().includes(searchString.toLowerCase()) ||
+                                    item.student.last_name.toLowerCase().includes(searchString.toLowerCase())
+                                )
+                            })
+                            return res.json({ response: true, data: filteredClearanceByStudentDetails})
                         }else{
                             return res.json({ response: true, data: [] })
                         }
@@ -317,6 +323,21 @@ module.exports = {
             })
         } catch (error) {
             return res.status(500).json({response:false, message: error.message})
+        }
+    },
+    getAvailableAcademicYear: async (req, res) => {
+        try {
+           await Clearance.find({}).select({"academic_year":1,"_id":0}).exec(async (error,clearance)=>{
+               if(error) return res.status(500).json({response: false, message: error.message})
+               let acad_year = []
+               await clearance.forEach(item => {
+                   acad_year.push(item.academic_year)
+               });
+
+               return res.status(200).json({response:true,data:[...new Set(acad_year)]})
+           })
+        } catch (error) {
+            return res.status(500).json({response: false, message: error.message})
         }
     }
 }

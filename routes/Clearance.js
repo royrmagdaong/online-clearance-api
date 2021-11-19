@@ -70,4 +70,9 @@ router.post('/student-requirements',
     ClearanceController.getStudentRequirements
 )
 
+// get student requirements
+router.get('/acad-year',
+    ClearanceController.getAvailableAcademicYear
+)
+
 module.exports = router
