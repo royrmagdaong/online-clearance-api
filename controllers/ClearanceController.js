@@ -206,12 +206,32 @@ module.exports = {
     // get approved students by department
     getApprovedStudentsByDept: async (req, res) => {
         try {
+            
+            let searchString = req.body.searchString
+            let section = req.body.section
+            let course = req.body.course
+            let semester = req.body.semester
+            let year_level = req.body.year_level
+            let academic_year = req.body.academic_year
+            let regexp = new RegExp("^"+ searchString, 'i')
+
             await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
                 if(err) return res.status(500).json({response:false, message: err.message})
                 if(foundDept){
                     await Clearance.find({
-                        request_approved: true,
-                        'departments_approved.dept_id': foundDept._id
+                        $and: [
+                            { request_approved: true },
+                            { 'departments_approved.dept_id': foundDept._id },
+                            { 
+                                $and: [
+                                    { course: { $in: course } },
+                                    // { section: section },
+                                    { year_level: { $in: year_level } },
+                                    // { semester: semester },
+                                    // { academic_year: academic_year }
+                                ]
+                            }
+                        ]
                     })
                     .populate('student',['first_name','last_name','email'])
                     .exec(async (err, clearance) => {
@@ -265,7 +285,7 @@ module.exports = {
                                 await clearance.save()
                             }
                             // socket io
-                            console.log(clearance.student.email)
+                            // console.log(clearance.student.email)
                             req.io.emit(clearance.student.email, `${foundDept.department_name} has been approved your signature request.`)
 
                             return res.json({ response: true, data: updatedClearance })
