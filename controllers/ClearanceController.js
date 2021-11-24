@@ -1,6 +1,7 @@
 const Clearance = require('../models/clearance')
 const HeadDepartment = require('../models/head-department')
 const Requirements = require('../models/requirement')
+const mongoose = require('mongoose')
 const fs = require('fs')
 
 module.exports = {
@@ -338,6 +339,45 @@ module.exports = {
            })
         } catch (error) {
             return res.status(500).json({response: false, message: error.message})
+        }
+    },
+    // get complete clearance
+    getCompletedClearance: async (req, res) =>{
+        try {
+            let student = req.body.student
+
+            await Clearance.aggregate([
+                {
+                    $match: {
+                        $and:[
+                            {student:new mongoose.Types.ObjectId(student)},
+                            {completed:true}
+                        ]
+                    }
+                },
+                {
+                    $lookup:{ from: 'students', localField: 'student', foreignField: '_id', as: 'student_info' }
+                },
+                {
+                    $lookup:{ 
+                        from: 'headdepartments', 
+                        // localField: 'departments_approved', 
+                        let: { dept_id: '$departments_approved.dept_id' },
+                        // foreignField: '_id', 
+                        'pipeline':[
+                            { '$match': {}}
+                        ],
+                        as: 'departments' }
+                }
+            ]).exec(async (error, clearance) => {
+                if(error) return res.json({response: false, message: error.message})
+                return res.json({
+                    response: true, 
+                    data: clearance
+                })
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
         }
     }
 }

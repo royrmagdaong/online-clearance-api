@@ -23,7 +23,7 @@ router.post('/clearance-form-request',
 // get clearance
 router.post('/student-clearance',
     authenticate,
-    authRole(['student','admin']),
+    authRole(['student','admin','head-department']),
     ClearanceController.getClearance
 )
 // request clearance
@@ -73,6 +73,12 @@ router.post('/student-requirements',
 // get student requirements
 router.get('/acad-year',
     ClearanceController.getAvailableAcademicYear
+),
+// get completed clearance
+router.post('/completed-clearance',
+    authenticate,
+    authRole(['student']),
+    ClearanceController.getCompletedClearance
 )
 
 module.exports = router
