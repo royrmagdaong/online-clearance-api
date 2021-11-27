@@ -8,6 +8,7 @@ const {Server} = require('socket.io')
 const mongoose = require('mongoose')
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors:{ origin: '*'} });
+var QRCode = require('qrcode')
 
 app.use(express.json())
 app.use(cors());
@@ -43,6 +44,11 @@ app.use('/head-department', DepartmentRoutes)
 app.use('/clearance', ClearanceRoutes)
 app.use('/course', CourseRoutes)
 app.use('/requirements', RequirementsRoutes)
+
+// QR CODE URL PNG
+// QRCode.toDataURL('youtube.com', function (err, url) {
+//     console.log(url)
+// })
 
 
 // app.listen(process.env.PORT, () => console.log(`Server Started at port ${process.env.PORT}`))
