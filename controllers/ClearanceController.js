@@ -3,6 +3,7 @@ const HeadDepartment = require('../models/head-department')
 const Requirements = require('../models/requirement')
 const mongoose = require('mongoose')
 const fs = require('fs')
+var QRCode = require('qrcode')
 
 module.exports = {
     // get over all clearances
@@ -374,6 +375,48 @@ module.exports = {
                 return res.json({
                     response: true, 
                     data: clearance
+                })
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
+    // view clearance
+    viewClearance: async (req, res) => {
+        try{
+            let clearance_id = req.params.id
+
+            await Clearance.aggregate([
+                {
+                    $match: {
+                        $and:[
+                            {_id:new mongoose.Types.ObjectId(clearance_id)},
+                        ]
+                    }
+                },
+                {
+                    $lookup:{ from: 'students', localField: 'student', foreignField: '_id', as: 'student_info' }
+                },
+                {
+                    $lookup:{ 
+                        from: 'headdepartments', 
+                        // localField: 'departments_approved', 
+                        let: { dept_id: '$departments_approved.dept_id' },
+                        // foreignField: '_id', 
+                        'pipeline':[
+                            { '$match': {}}
+                        ],
+                        as: 'departments' }
+                }
+            ]).exec(async (error, clearance) => {
+                if(error) return res.json({response: false, message: error.message})
+                await QRCode.toDataURL(`${process.env.CLIENT_URL}/clearance/viewer/${clearance[0]._id}`, function (error, url) {
+                    if(error) return res.status(500).json({ response: false, message: error.message })
+                    return res.json({
+                        response: true, 
+                        data: clearance,
+                        qr: url
+                    })
                 })
             })
         } catch (error) {

@@ -81,4 +81,9 @@ router.post('/completed-clearance',
     ClearanceController.getCompletedClearance
 )
 
+// check clearance
+router.get('/viewer/:id',
+    ClearanceController.viewClearance
+)
+
 module.exports = router
