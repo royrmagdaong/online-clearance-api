@@ -352,7 +352,7 @@ module.exports = {
                     $match: {
                         $and:[
                             {student:new mongoose.Types.ObjectId(student)},
-                            {completed:true}
+                            // {completed:true}
                         ]
                     }
                 },
@@ -372,9 +372,13 @@ module.exports = {
                 }
             ]).exec(async (error, clearance) => {
                 if(error) return res.json({response: false, message: error.message})
-                return res.json({
-                    response: true, 
-                    data: clearance
+                await QRCode.toDataURL(`${process.env.CLIENT_URL}/clearance/viewer/${clearance[0]._id}`, function (error, url) {
+                    if(error) return res.status(500).json({ response: false, message: error.message })
+                    return res.json({
+                        response: true, 
+                        data: clearance,
+                        qr: url
+                    })
                 })
             })
         } catch (error) {
