@@ -8,5 +8,17 @@ const authenticate = require('../middlewares/authenticate')
 router.get('/',
     CourseController.getCourses
 )
+// add course
+router.post('/create',
+    authenticate,
+    authRole(['admin']),
+    CourseController.addCourse
+)
+// update course
+router.post('/update',
+    authenticate,
+    authRole(['admin']),
+    CourseController.updateCourse
+)
 
 module.exports = router

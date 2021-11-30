@@ -14,6 +14,10 @@ const courseSchema = Schema({
         type: Array,
         required: true
     },
+    number_of_years:{
+        type: Array,
+        required: true
+    },
     created_at:{
         type: Date,
         required: true,

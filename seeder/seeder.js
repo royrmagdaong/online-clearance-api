@@ -148,32 +148,38 @@ const course = [
     {
         code: "BSIT",
         description: "BS in Information Technology",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd','3rd','4th']
     },
     {
         code: "BSOA",
         description: "BS in Office Administration",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd','3rd','4th']
     },
     {
         code: "COA",
         description: "Certificate in Office Administration",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd']
     },
     {
         code: "CCS",
         description: "Certificate in Computer Science",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd']
     },
     {
         code: "CHS",
         description: "Computer Hardware Servicing NCII",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd']
     },
     {
         code: "CHRM",
         description: "Certificate in Hotel and Restaurant Management",
-        sections: ['A','B','C','D']
+        sections: ['A','B','C','D'],
+        number_of_years: ['1st','2nd']
     }
 ]
 
@@ -182,7 +188,8 @@ const populateCourse = async () => {
         let course_ = await new Course({
             code: course[i].code,
             description: course[i].description,
-            sections: course[i].sections
+            sections: course[i].sections,
+            number_of_years: course[i].number_of_years
         })
         await course_.save((err, newCourse) =>{
             if(err){ return console.log('failed to create course.') }
