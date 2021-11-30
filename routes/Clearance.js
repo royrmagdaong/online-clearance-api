@@ -63,6 +63,12 @@ router.post('/approve-signature-request',
     authRole(['head-department']),
     ClearanceController.approveSignatureRequest
 )
+// disapprove signature request
+router.post('/disapprove-signature-request',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.disapproveSignatureRequest
+)
 // get student requirements
 router.post('/student-requirements',
     authenticate,

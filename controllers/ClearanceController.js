@@ -426,5 +426,47 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ response: false, message: error.message })
         }
+    },
+    disapproveSignatureRequest: async (req, res) =>{
+        try {
+            let clearance_id = req.body.clearance_id
+            let user_id = res.user.id
+
+            await HeadDepartment.findOne({user_id: user_id}).exec(async (err, foundDept) => {
+                if(err) return res.status(500).json({response:false, message: err.message})
+                if(foundDept){
+                    await Clearance.findOne({
+                        _id: clearance_id,
+                        request_approved: true, 
+                        outdated: false, 
+                        departments_pending: foundDept._id
+                    })
+                    .populate('student',['first_name','last_name','email'])
+                    .exec(async (err, clearance) => {
+                        if(err) return res.status(500).json({ response: false, message: err.message })
+                        if(clearance){
+                            const index = clearance.departments_pending.indexOf(foundDept._id)
+                            if(index > -1){
+                                clearance.departments_pending.splice(index,1)
+                            }
+                            clearance.departments_disapproved.push(foundDept._id)
+                            let updatedClearance = await clearance.save()
+
+                            // socket io
+                            // console.log(clearance.student.email)
+                            req.io.emit(clearance.student.email, `${foundDept.department_name} has been disapproved your signature request.`)
+
+                            return res.json({ response: true, data: updatedClearance })
+                        }else{
+                            return res.json({ response: false, data: [] })
+                        }
+                    })
+                }else{
+                    return res.json({response:false, message: 'not found', data: []})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({response:false, message: error.message})
+        }
     }
 }
