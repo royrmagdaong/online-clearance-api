@@ -18,10 +18,8 @@ const requirementSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'HeadDepartment'
     },
-    message: {
-        type: String,
-        default: null
-    },
+    message: [String],
+    disapproved_message: [String],
     files: [
         {
             type: Map,

@@ -45,6 +45,13 @@ router.post('/request-signature',
     upload.array('requirements', 10),
     ClearanceController.requestSignature
 )
+// update request signature
+router.post('/update-request-signature',
+    authenticate,
+    authRole(['student']),
+    upload.array('requirements', 10),
+    ClearanceController.updateRequestSignature
+)
 // get all student who requested signature
 router.post('/students-signature-request',
     authenticate,
@@ -72,7 +79,7 @@ router.post('/disapprove-signature-request',
 // get student requirements
 router.post('/student-requirements',
     authenticate,
-    authRole(['head-department']),
+    authRole(['head-department','student']),
     ClearanceController.getStudentRequirements
 )
 

@@ -147,10 +147,9 @@ module.exports = {
                 student: user_id,
                 department: department_id,
                 clearance: clearance_id,
-                message: message,
                 files: files
             })
-
+            requirements.message.push(message)
             await requirements.save(async (error, newRequirement) => {
                 if(error) return res.json({response: false, message: error.message})
                 if(newRequirement){
@@ -171,6 +170,57 @@ module.exports = {
                             return res.status(500).json({ response: false, message: 'Clearance not found.' })
                         }
                     })
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
+    // update request signature
+    updateRequestSignature: async (req, res) => {
+        try {
+            let requirements_id = req.body.requirements_id
+            let clearance_id = req.body.clearance_id
+            let department_id = req.body.department_id
+            let message = req.body.message
+            let files = req.files
+
+            await Requirements.findOne({_id: requirements_id}).exec(async (error, requirements)=>{
+                if(error) return res.status(500).json({ response: false, message: error.message })
+                if(requirements){
+                    requirements.files.forEach(requirement => {
+                        fs.unlinkSync(requirement.get('path'));
+                    });
+                    requirements.files = files
+                    requirements.message.push(message)
+                    requirements.updated_at = Date.now()
+
+                    requirements.save(async error=>{
+                        if(error) return res.status(500).json({ response: false, message: error.message })
+                        await Clearance.findOne({_id: clearance_id, request_approved: true, outdated: false})
+                        .exec(async (error, clearance) => {
+                            if(error) return res.status(500).json({ response: false, message: error.message })
+                            if(clearance){
+                                if(clearance.departments_pending.includes(department_id)){
+                                    return res.status(500).json({ response: false, message: 'Already requested for this department.' })
+                                }
+                                const index = clearance.departments_disapproved.indexOf(department_id)
+                                if(index > -1){
+                                    clearance.departments_disapproved.splice(index,1)
+                                }
+                                clearance.departments_pending.push(department_id)
+                                clearance.updated_at = Date.now()
+                                let updatedClearance = await clearance.save(async error=>{
+                                    if(error) return res.status(500).json({ response: false, message: error.message })
+                                    return await res.json({ response: true, message: 'Signature Requested.', data: updatedClearance })
+                                })
+                            }else{
+                                return res.status(500).json({ response: false, message: 'Clearance not found.' })
+                            }
+                        })
+                    })
+                }else{
+                    return res.status(500).json({ response: false, message: 'nothing found!' })
                 }
             })
         } catch (error) {
@@ -321,7 +371,11 @@ module.exports = {
             .populate('student')
             .exec((error, requirements)=>{
                 if(error) return res.status(500).json({response:false, message: error.message})
-                return res.status(200).json({response: true, data: requirements, message: 'success' })
+                if(requirements){
+                    return res.status(200).json({response: true, data: requirements, message: 'success' })
+                }else{
+                    return res.json({response: true, data: [] })
+                }
             })
         } catch (error) {
             return res.status(500).json({response:false, message: error.message})
@@ -430,6 +484,8 @@ module.exports = {
     disapproveSignatureRequest: async (req, res) =>{
         try {
             let clearance_id = req.body.clearance_id
+            let disapproved_message = req.body.disapproved_message
+            let requirements_id = req.body.requirements_id
             let user_id = res.user.id
 
             await HeadDepartment.findOne({user_id: user_id}).exec(async (err, foundDept) => {
@@ -450,13 +506,24 @@ module.exports = {
                                 clearance.departments_pending.splice(index,1)
                             }
                             clearance.departments_disapproved.push(foundDept._id)
-                            let updatedClearance = await clearance.save()
-
-                            // socket io
-                            // console.log(clearance.student.email)
-                            req.io.emit(clearance.student.email, `${foundDept.department_name} has been disapproved your signature request.`)
-
-                            return res.json({ response: true, data: updatedClearance })
+                            let updatedClearance = await clearance.save(async error =>{
+                                if(error) return res.status(500).json({ response: false, message: error.message })
+                                await Requirements.findOne({_id: requirements_id}).exec(async(error,requirements)=>{
+                                    if(error) return res.status(500).json({ response: false, message: error.message })
+                                    if(requirements){
+                                        requirements.disapproved_message.push(disapproved_message)
+                                        await requirements.save(async error=>{
+                                            if(error) return res.status(500).json({ response: false, message: error.message })
+                                            // socket io
+                                            // console.log(clearance.student.email)
+                                            req.io.emit(clearance.student.email, `${foundDept.department_name} has been disapproved your signature request.`)
+                                            return res.json({ response: true, data: updatedClearance })
+                                        })
+                                    }else{
+                                        return res.json({response:false, message: 'requirements not found.'})
+                                    }
+                                })
+                            })
                         }else{
                             return res.json({ response: false, data: [] })
                         }
