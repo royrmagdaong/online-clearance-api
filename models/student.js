@@ -6,6 +6,11 @@ const studentSchema = Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User'
     },
+    profile_pic:{
+        type: Map,
+        of: String,
+        default: {}
+    },
     first_name:{
         type: String,
         default: null

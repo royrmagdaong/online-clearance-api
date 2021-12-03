@@ -38,5 +38,9 @@ router.patch('/update/:id',
 router.post('/verify',
     StudentController.verifyStudent
 )
+// view pic
+router.get('/view/:id',
+    StudentController.viewProfPic
+)
 
 module.exports = router

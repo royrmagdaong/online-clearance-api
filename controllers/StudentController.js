@@ -3,6 +3,7 @@ const Student = require('../models/student')
 const User = require('../models/user')
 const generateCode = require('../middlewares/generateCode')
 const saltRounds = 10;
+const fs = require('fs')
 
 module.exports = {
     getAllStudents: async (req, res) => {
@@ -164,5 +165,28 @@ module.exports = {
         } catch (error) {
             res.status(500).json({response: false, message: error.message})
         }
-    }
+    },
+    viewProfPic: async (req, res) => {
+        try {
+            let file_name = req.params.id
+            // let mime_type = params.mime_type
+
+            var stream = fs.createReadStream(`uploads/profile_pic/${file_name}`)
+            stream.on('error',(error)=>{
+                return res.status(404).json({ response: false, message: error.message })
+            })
+            var filename = file_name; 
+            // Be careful of special characters
+
+            filename = encodeURIComponent(filename);
+            // Ideally this should strip them
+
+            res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
+            // res.setHeader('Content-type', mime_type);
+
+            stream.pipe(res);
+        } catch (error) {
+            return res.json({response: false, message: error.message})
+        }
+    },
 }

@@ -221,8 +221,13 @@ const populateUserStudent = async (roles, hashPassword) => {
                     last_name: student[i].last_name,
                     course: student[i].course,
                     section: student[i].section,
-                    year_level: student[i].year_level
+                    year_level: student[i].year_level,
                 })
+                stdt.profile_pic.set('type', 'img/png')
+                stdt.profile_pic.set('base', 'base64')
+                stdt.profile_pic.set('path', `./uploads/profile_pic/student`)
+                stdt.profile_pic.set('filename', `student.png`)
+                
                 await stdt.save(async (err, newStudent) =>{
                     if(err){ return console.log('failed to create user student.') }
                     if(newStudent){
