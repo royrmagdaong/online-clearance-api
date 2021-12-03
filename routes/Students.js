@@ -5,6 +5,10 @@ const authRole = require('../middlewares/authRole')
 const checkEmail = require('../middlewares/checkEmail')
 const authenticate = require('../middlewares/authenticate')
 
+// for file uploads
+const multer  = require('multer')
+const upload_pic = multer({ dest: 'uploads/profile_pic' })
+
 // get all students
 router.post('/',
     authenticate,
@@ -41,6 +45,13 @@ router.post('/verify',
 // view pic
 router.get('/view/:id',
     StudentController.viewProfPic
+)
+// Change prof pic
+router.post('/change-prof-pic',
+    authenticate,
+    authRole(['student']),
+    upload_pic.single('profilepicture'),
+    StudentController.changeProfilePic
 )
 
 module.exports = router
