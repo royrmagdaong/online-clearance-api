@@ -11,6 +11,11 @@ const headDepartmentSchema = Schema({
         of: String,
         default: {}
     },
+    profile_pic:{
+        type: Map,
+        of: String,
+        default: {}
+    },
     in_charge:{
         type: String,
         required: true

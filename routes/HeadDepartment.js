@@ -8,6 +8,7 @@ const authenticate = require('../middlewares/authenticate')
 // for file uploads
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/signature' })
+const upload_pic = multer({ dest: 'uploads/profile_pic' })
 
 
 // get all departments
@@ -54,6 +55,17 @@ router.post('/upload-signature',
     authRole(['admin']),
     upload.single('signature'),
     HeadDepartmentController.uploadSignatureImg
+)
+// view pic
+router.get('/view/:id',
+    HeadDepartmentController.viewProfPic
+)
+// Change prof pic
+router.post('/change-prof-pic',
+    authenticate,
+    authRole(['head-department']),
+    upload_pic.single('profilepicture'),
+    HeadDepartmentController.changeProfilePic
 )
 
 module.exports = router

@@ -189,5 +189,62 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({response: false, message: error.message})
         }
-    }
+    },
+    changeProfilePic: async (req, res) => {
+        try {
+            let id = res.user.id
+            await User.findOne({_id:id}).exec(async (error, user)=>{
+                if(error) return res.status(500).json({response: false, message: error.message})
+                if(user){
+                    await HeadDepartment.findOne({user_id:user._id}).exec( async (err, department)=>{
+                        if(err) return res.status(500).json({response: false, message: err.message})
+                        if(department){
+                            try {
+                                fs.unlinkSync(department.profile_pic.get('path'));
+                            } catch (error) {
+                                console.log(error.message)
+                            }
+                            department.profile_pic.set('type', req.file.mimetype)
+                            department.profile_pic.set('base', 'base64')
+                            department.profile_pic.set('path', req.file.path)
+                            department.profile_pic.set('filename', req.file.filename)
+                            await department.save(error=>{
+                                if(error) return res.status(500).json({response: false, message: error.message})
+                                return res.status(200).json({response: true, message: 'Profile picture updated successfully'})
+                            })
+                        }else{
+                            return res.status(500).json({response: false, message: 'nothing found.'})
+                        }
+                    }) 
+                }else{
+                    return res.status(500).json({response: false, message: 'nothing found.'})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({response: false, message: error.message})
+        }
+    },
+    viewProfPic: async (req, res) => {
+        try {
+            let file_name = req.params.id
+            // let mime_type = params.mime_type
+
+            var stream = fs.createReadStream(`uploads/profile_pic/${file_name}`)
+            stream.on('error',(error)=>{
+                return res.json({ response: false, message: error.message })
+            })
+            var filename = file_name; 
+            // Be careful of special characters
+
+            filename = encodeURIComponent(filename);
+            // Ideally this should strip them
+
+            res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
+            // res.setHeader('Content-type', '*');
+
+            stream.pipe(res);
+        } catch (error) {
+            return res.json({response: false, message: error.message})
+        }
+    },
 }

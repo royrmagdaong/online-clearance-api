@@ -266,6 +266,11 @@ const populateUserDepartment = async (roles, hashPassword) => {
                     email: department[i].email
                 })
 
+                dept.profile_pic.set('type', 'img/png')
+                dept.profile_pic.set('base', 'base64')
+                dept.profile_pic.set('path', `./uploads/profile_pic/professor`)
+                dept.profile_pic.set('filename', `professor.jpg`)
+
                 dept.signature.set('type', 'img/png')
                 dept.signature.set('base', 'base64')
                 dept.signature.set('path', `./uploads/signature/${department[i].email}`)
