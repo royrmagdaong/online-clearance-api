@@ -543,5 +543,68 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({response:false, message: error.message})
         }
+    },
+    getCurrentClearanceDataByDept: async (req, res) => {
+        try {
+            let id = res.user.id
+            let academic_year = req.body.academic_year
+            let semester = req.body.semester
+            await HeadDepartment.findOne({user_id: id}).exec(async (error,department)=>{
+                if(error) return res.status(500).json({response: false, message:error.message})
+                if(department){
+                    const aprroved = await Clearance.countDocuments({
+                        $and: [
+                            {'departments_approved.dept_id': department._id},
+                            {academic_year: academic_year},
+                            {semester: semester},
+                        ]
+                    })
+                    const disapproved = await Clearance.countDocuments({
+                        $and: [
+                            {departments_disapproved: department._id},
+                            {academic_year: academic_year},
+                            {semester: semester},
+                        ]
+                    })
+                    const pending = await Clearance.countDocuments({
+                        $and: [
+                            {departments_pending: department._id},
+                            {academic_year: academic_year},
+                            {semester: semester},
+                        ]
+                    })
+
+                    res.status(200).json({response:true, data: [aprroved,disapproved,pending]})
+                }else{
+                    res.status(200).json({response:true, data: [0,0,0]})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({response: false, message:error.message})
+        }
+    },
+    getClearanceDataByDept: async (req, res) => {
+        try {
+            let id = res.user.id
+            await HeadDepartment.findOne({user_id: id}).exec(async (error,department)=>{
+                if(error) return res.status(500).json({response: false, message:error.message})
+                if(department){
+                    const aprroved = await Clearance.countDocuments({
+                        'departments_approved.dept_id': department._id
+                    })
+                    const disapproved = await Clearance.countDocuments({
+                        departments_disapproved: department._id
+                    })
+                    const pending = await Clearance.countDocuments({
+                        departments_pending: department._id
+                    })
+                    res.status(200).json({response:true, data: [aprroved,disapproved,pending]})
+                }else{
+                    res.status(200).json({response:true, data: [0,0,0]})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({response: false, message:error.message})
+        }
     }
 }

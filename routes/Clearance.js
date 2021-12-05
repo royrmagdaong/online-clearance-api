@@ -93,10 +93,21 @@ router.post('/completed-clearance',
     authRole(['student']),
     ClearanceController.getCompletedClearance
 )
-
 // check clearance
 router.get('/viewer/:id',
     ClearanceController.viewClearance
+)
+// get current approved clearance count by department
+router.post('/current-clearance-data',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getCurrentClearanceDataByDept
+)
+// get overall approved clearance count by department
+router.post('/clearance-data',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getClearanceDataByDept
 )
 
 module.exports = router
