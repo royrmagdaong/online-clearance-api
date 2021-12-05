@@ -230,19 +230,35 @@ module.exports = {
     // get student who requested signature
     getStudentRequest: async (req, res) => {
         try {
+            let searchString = req.body.searchString
+            let course = req.body.course
+            let year_level = req.body.year_level
+
             await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
                 if(err) return res.status(500).json({response:false, message: err.message})
                 if(foundDept){
                     await Clearance.find({
-                        request_approved: true, 
-                        outdated: false, 
-                        departments_pending: foundDept._id
+                        $and: [
+                            { departments_pending: foundDept._id },
+                            { 
+                                $and: [
+                                    { course: { $in: course } },
+                                    { year_level: { $in: year_level } }
+                                ]
+                            }
+                        ]
                     })
                     .populate('student',['first_name','last_name','email'])
                     .exec(async (err, clearance) => {
                         if(err) return res.status(500).json({ response: false, message: err.message })
                         if(clearance.length>0){
-                            return res.json({ response: true, data: clearance })
+                            let filteredClearanceByStudentDetails = await clearance.filter(item=>{
+                                return (
+                                    item.student.first_name.toLowerCase().includes(searchString.toLowerCase()) ||
+                                    item.student.last_name.toLowerCase().includes(searchString.toLowerCase())
+                                )
+                            })
+                            return res.json({ response: true, data: filteredClearanceByStudentDetails})
                         }else{
                             return res.json({ response: true, data: [] })
                         }
