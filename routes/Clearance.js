@@ -109,5 +109,11 @@ router.post('/clearance-data',
     authRole(['head-department']),
     ClearanceController.getClearanceDataByDept
 )
+// get approved students for print
+router.post('/approved-students-print',
+    authenticate,
+    authRole(['head-department']),
+    ClearanceController.getApprovedStudentsByDeptForPrint
+)
 
 module.exports = router

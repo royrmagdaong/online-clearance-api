@@ -606,5 +606,42 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({response: false, message:error.message})
         }
-    }
+    },
+    getApprovedStudentsByDeptForPrint: async (req, res) => {
+        try {
+            let semester = req.body.semester
+            let academic_year = req.body.academic_year
+
+            await HeadDepartment.findOne({user_id:res.user.id}).exec(async (err, foundDept) => {
+                if(err) return res.status(500).json({response:false, message: err.message})
+                if(foundDept){
+                    await Clearance.find({
+                        $and: [
+                            { request_approved: true },
+                            { 'departments_approved.dept_id': foundDept._id },
+                            { 
+                                $and: [
+                                    { semester: { $in: semester } },
+                                    { academic_year: { $in: academic_year } }
+                                ]
+                            }
+                        ]
+                    })
+                    .populate('student',['first_name','last_name','email'])
+                    .exec(async (err, clearance) => {
+                        if(err) return res.status(500).json({ response: false, message: err.message })
+                        if(clearance.length>0){
+                            return res.json({ response: true, data: clearance})
+                        }else{
+                            return res.json({ response: true, data: [] })
+                        }
+                    })
+                }else{
+                    res.json({response:false, message: 'not found', data: []})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
 }
