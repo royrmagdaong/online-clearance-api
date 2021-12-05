@@ -7,6 +7,7 @@ const User = require('../models/user')
 const HeadDepartment = require('../models/head-department')
 const Student = require('../models/student')
 const Course = require('../models/course')
+const SchoolYear = require('../models/schoolyear')
 const Requirements = require('../models/requirement')
 const fs = require('fs')
 const path = require('path');
@@ -42,6 +43,7 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         './models/course',
                         './models/clearance',
                         './models/requirement',
+                        './models/schoolyear',
                     ])
                 
                     // clear models
@@ -51,7 +53,8 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
                         'HeadDepartment',
                         'Course',
                         'Clearance',
-                        'Requirements'
+                        'Requirements',
+                        'SchoolYear'
                     ], async ()=> {
 
                         // create admin user
@@ -68,6 +71,9 @@ seeder.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlPa
 
                         // clear all files from requirements directory
                         await clearRequirements()
+
+                        // init school year
+                        await initSchoolYear()
 
                         await setTimeout(()=>{
                             seeder.disconnect();
@@ -320,4 +326,19 @@ const clearRequirements = async () => {
         });
     }
     });
+}
+
+const initSchoolYear = async () => {
+    let curYear = new Date().getFullYear()
+    let academic_year = `${curYear}-${curYear+1}`
+    let semester = '1st'
+    await new SchoolYear({
+        ACADEMIC_YEAR: academic_year,
+        SEMESTER: semester
+    }).save((error)=>{
+        if(error) console.log('School year initialize failed!')
+        else{
+            console.log('School year initialized!')
+        }
+    })
 }

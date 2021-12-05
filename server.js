@@ -36,6 +36,7 @@ const DepartmentRoutes = require('./routes/HeadDepartment')
 const ClearanceRoutes = require('./routes/Clearance')
 const CourseRoutes = require('./routes/Course')
 const RequirementsRoutes = require('./routes/Requirement')
+const SchoolYearRoutes = require('./routes/SchoolYear')
 
 // Routes
 app.use('/user', UserRoutes)
@@ -44,6 +45,7 @@ app.use('/head-department', DepartmentRoutes)
 app.use('/clearance', ClearanceRoutes)
 app.use('/course', CourseRoutes)
 app.use('/requirements', RequirementsRoutes)
+app.use('/school-year', SchoolYearRoutes)
 
 // QR CODE URL PNG
 // QRCode.toDataURL('youtube.com', function (err, url) {
