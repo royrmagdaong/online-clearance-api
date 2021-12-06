@@ -55,4 +55,11 @@ router.post('/reactivate/:id',
     UserController.reactivateUser
 )
 
+// get student by course - count
+router.post('/student-count-by-course', 
+    authenticate, 
+    authRole(['admin']), 
+    UserController.getStudentsByCourseCount
+)
+
 module.exports = router

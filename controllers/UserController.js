@@ -1,4 +1,7 @@
 const User = require('../models/user')
+const Student = require('../models/student')
+const HeadDepartment = require('../models/head-department')
+const Course = require('../models/course')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const saltRounds = 10;
@@ -30,8 +33,11 @@ module.exports = {
     // get user total count
     getUserCounts: async (req, res) => {
         try {
-            const count = await User.countDocuments();
-            await res.json({ response: true, count: count})
+            const adminCount = await User.countDocuments({role:'admin'});
+            const studentCount = await Student.countDocuments();
+            const departmentCount = await HeadDepartment.countDocuments();
+
+            await res.json({ response: true, data: [adminCount,studentCount,departmentCount]})
         } catch (error) {
             res.status(500).json({ response: false, message: error.message })
         }
@@ -137,5 +143,32 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ message: error.message })
         }
-    }
+    },
+    getStudentsByCourseCount: async (req, res) => {
+        try {
+            let courseCodes = []
+            let studentCount = []
+            // const studentCount = await Student.countDocuments({});
+            await Course.find({},'code').exec(async (error, codes)=>{
+                if(error) return res.status(500).json({ response: false, message: error.message })
+                if(codes){
+                    codes.forEach(code => {
+                        courseCodes.push(code.code)
+                    })
+                    await Student.find({}).exec(async (error, students)=>{
+                        if(error) return res.status(500).json({ response: false, message: error.message })
+                        courseCodes.forEach(code=>{
+                            let count = students.filter(item=>{
+                                return code === item.course
+                            })
+                            studentCount.push(count.length)
+                        })
+                        return res.json({response:true, data:studentCount, codes: courseCodes})
+                    })
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({ response: false, message: error.message })
+        }
+    },
 }
