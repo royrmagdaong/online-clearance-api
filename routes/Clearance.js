@@ -115,5 +115,11 @@ router.post('/approved-students-print',
     authRole(['head-department']),
     ClearanceController.getApprovedStudentsByDeptForPrint
 )
+// get clearance by status count by dept
+router.post('/clearance-status-count',
+    authenticate,
+    authRole(['admin']),
+    ClearanceController.getClearanceCountByDept
+)
 
 module.exports = router

@@ -660,4 +660,59 @@ module.exports = {
             return res.status(500).json({ response: false, message: error.message })
         }
     },
+    getClearanceCountByDept: async (req, res) => {
+        try {
+            let department_names = []
+            let department_ids = []
+            let pending_clearances = []
+            let approved_clearances = []
+            let disapproved_clearances = []
+            await HeadDepartment.find({}).exec(async (error,depts)=>{
+                if(error) return res.status(500).json({response:false, message:error.message})
+                if(depts){
+                    depts.forEach(dept => {
+                        if(dept.department_name.includes('BSIT')){
+                            department_names.push('IT Head')
+                        }else if(dept.department_name.includes('BSOA')){
+                            department_names.push('OA Head')
+                        }else{
+                            department_names.push(dept.department_name)
+                        }
+                        department_ids.push(dept._id)
+                    });
+
+                    let approved1 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[0]})
+                    let approved2 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[1]})
+                    let approved3 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[2]})
+                    let approved4 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[3]})
+                    let approved5 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[4]})
+                    let approved6 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[5]})
+                    let approved7 = await Clearance.countDocuments({ 'departments_approved.dept_id': department_ids[6]})
+                    approved_clearances = [approved1,approved2,approved3,approved4,approved5,approved6,approved7]
+
+                    let pending1 = await Clearance.countDocuments({ departments_pending: department_ids[0]})
+                    let pending2 = await Clearance.countDocuments({ departments_pending: department_ids[1]})
+                    let pending3 = await Clearance.countDocuments({ departments_pending: department_ids[2]})
+                    let pending4 = await Clearance.countDocuments({ departments_pending: department_ids[3]})
+                    let pending5 = await Clearance.countDocuments({ departments_pending: department_ids[4]})
+                    let pending6 = await Clearance.countDocuments({ departments_pending: department_ids[5]})
+                    let pending7 = await Clearance.countDocuments({ departments_pending: department_ids[6]})
+                    pending_clearances = [pending1,pending2,pending3,pending4,pending5,pending6,pending7]
+
+                    let disapproved1 = await Clearance.countDocuments({ departments_disapproved: department_ids[0]})
+                    let disapproved2 = await Clearance.countDocuments({ departments_disapproved: department_ids[1]})
+                    let disapproved3 = await Clearance.countDocuments({ departments_disapproved: department_ids[2]})
+                    let disapproved4 = await Clearance.countDocuments({ departments_disapproved: department_ids[3]})
+                    let disapproved5 = await Clearance.countDocuments({ departments_disapproved: department_ids[4]})
+                    let disapproved6 = await Clearance.countDocuments({ departments_disapproved: department_ids[5]})
+                    let disapproved7 = await Clearance.countDocuments({ departments_disapproved: department_ids[6]})
+                    disapproved_clearances = [disapproved1,disapproved2,disapproved3,disapproved4,disapproved5,disapproved6,disapproved7]
+
+                    return res.status(200).json({response:true, approved:approved_clearances, pending:pending_clearances, disapproved: disapproved_clearances, departments: department_names})
+                }
+            })
+        } catch (error) {
+            return res.status(500).json({response:false, message:error.message})
+        }
+    }
 }
